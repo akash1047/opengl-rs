@@ -1,13 +1,18 @@
 use glad_gl::gl;
-use glfw::{Action, Context, Key};
+use glfw::{Action, Context, Key, WindowHint};
+
+mod shader;
 
 fn main() {
     let width: i32 = 800;
-    let height: i32 = 800;
+    let height: i32 = 600;
     let title = env!("CARGO_PKG_NAME");
 
     // initialize glfw library
-    let mut glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();
+    let mut glfw = glfw::init(glfw::FAIL_ON_ERRORS).expect("failed to initialize glfw library");
+
+    glfw.window_hint(WindowHint::ContextVersion(3, 3));
+    glfw.window_hint(WindowHint::OpenGlProfile(glfw::OpenGlProfileHint::Core));
 
     // Create a windowed mode window and its OpenGL context
     let (mut window, events) = glfw
