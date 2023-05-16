@@ -1,0 +1,9 @@
+[package]
+name = "opengl-rs"
+version = "0.1.0"
+authors = ["Akash Lohar <github@akash1047>"]
+edition = "2021"
+
+[dependencies]
+glfw = "0.51.0"
+glad-gl = { path = "external/glad-gl" }
