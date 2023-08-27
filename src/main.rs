@@ -2,6 +2,7 @@ use glad_gl::gl;
 use glfw::{Action, Context, Key, WindowHint};
 
 mod shader;
+mod buffer;
 
 fn main() {
     let width: i32 = 800;

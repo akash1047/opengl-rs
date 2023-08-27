@@ -1,7 +1,7 @@
 [package]
 name = "opengl-rs"
 version = "0.1.0"
-authors = ["Akash Lohar <github@akash1047>"]
+authors = ["Akash Lohar"]
 edition = "2021"
 
 [dependencies]
