@@ -50,3 +50,9 @@ impl Program {
         unsafe { gl::UseProgram(self.id) }
     }
 }
+
+impl Drop for Program {
+    fn drop(&mut self) {
+        unsafe { gl::DeleteProgram(self.id) }
+    }
+}
