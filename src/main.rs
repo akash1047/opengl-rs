@@ -1,8 +1,9 @@
 use glad_gl::gl;
 use glfw::{Action, Context, Key, WindowHint};
+use shader::Shader;
 
-mod shader;
 mod buffer;
+mod shader;
 
 fn main() {
     let width: i32 = 800;
@@ -27,11 +28,19 @@ fn main() {
 
     // Make the window's context current
     window.make_current();
-
     window.set_key_polling(true);
 
     // load opengl functions
     gl::load(|s| window.get_proc_address(s));
+
+    // shader compile
+    let vertex_shader = Shader::gen(shader::ShaderKind::VertexShader);
+    vertex_shader.source_str(VERTEX_SHADER_SOURCE);
+    vertex_shader.compile().unwrap();
+
+    let fragment_shader = Shader::gen(shader::ShaderKind::FragmentShader);
+    fragment_shader.source_str(FRAGMENT_SHADER_SOURCE);
+    fragment_shader.compile().unwrap();
 
     unsafe {
         gl::ClearColor(1.0f32, 1.0f32, 0.4f32, 0.7f32);
@@ -59,3 +68,19 @@ fn main() {
         }
     }
 }
+
+const VERTEX_SHADER_SOURCE: &'static str = "#version 330 core
+layout (location = 0) in vec3 aPos;
+
+void main()
+{
+    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+}\0";
+
+const FRAGMENT_SHADER_SOURCE: &'static str = "#version 330 core
+out vec4 FragColor;
+
+void main()
+{
+    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+}\0";
