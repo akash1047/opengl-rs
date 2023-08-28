@@ -1,11 +1,13 @@
+use std::{mem::size_of, ptr::null};
+
 use glad_gl::gl;
 use glfw::{Action, Context, Key, WindowHint};
 use program::Program;
 use shader::Shader;
 
 mod buffer;
-mod shader;
 mod program;
+mod shader;
 
 fn main() {
     let width: i32 = 800;
@@ -48,10 +50,49 @@ fn main() {
     shader_program.attach(&vertex_shader);
     shader_program.attach(&fragment_shader);
     shader_program.link().unwrap();
-    shader_program.use_program();
+
+    drop(vertex_shader);
+    drop(fragment_shader);
+
+    let vertices: [f32; 9] = [
+        -0.5, -0.5, 0.0, // left
+        0.5, -0.5, 0.0, // right
+        0.0, 0.5, 0.0, // top
+    ];
+
+    let mut vao: u32 = 0;
+    unsafe {
+        gl::GenVertexArrays(1, &mut vao);
+        gl::BindVertexArray(vao);
+    }
+
+    let mut vbo: u32 = 0;
+    unsafe {
+        gl::GenBuffers(1, &mut vbo);
+        gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
+        gl::BufferData(
+            gl::ARRAY_BUFFER,
+            (vertices.len() * size_of::<f32>()) as isize,
+            vertices.as_ptr().cast(),
+            gl::STATIC_DRAW,
+        );
+
+        gl::VertexAttribPointer(
+            0,
+            3,
+            gl::FLOAT,
+            gl::FALSE,
+            (3 * size_of::<f32>()) as i32,
+            null(),
+        );
+
+        gl::EnableVertexAttribArray(0);
+    }
 
     unsafe {
+        gl::BindVertexArray(vao);
         gl::ClearColor(1.0f32, 1.0f32, 0.4f32, 0.7f32);
+        gl::DrawArrays(gl::TRIANGLES, 0, 3);
     }
 
     // Loop until the user closes the window
@@ -59,6 +100,9 @@ fn main() {
         unsafe {
             gl::Clear(gl::COLOR_BUFFER_BIT);
         }
+
+        shader_program.use_program();
+        unsafe {gl::DrawArrays(gl::TRIANGLES, 0, 3);}
 
         // Swap front and back buffers
         window.swap_buffers();
