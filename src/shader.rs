@@ -1,4 +1,4 @@
-use std::ptr::null;
+use std::ptr::{null, null_mut};
 
 use glad_gl::gl;
 
@@ -9,7 +9,7 @@ pub enum ShaderKind {
 }
 
 pub struct Shader {
-    id: u32,
+    pub id: u32,
 }
 
 impl Shader {
@@ -35,13 +35,13 @@ impl Shader {
                 let mut log_size: i32 = 0;
                 gl::GetShaderiv(self.id, gl::INFO_LOG_LENGTH, &mut log_size);
                 let mut info_log: Vec<u8> = Vec::with_capacity(log_size as usize);
-                info_log.set_len(log_size as usize);
                 gl::GetShaderInfoLog(
                     self.id,
                     info_log.capacity() as i32,
-                    &mut log_size,
+                    null_mut(),
                     info_log.as_mut_ptr().cast(),
                 );
+                info_log.set_len(log_size as usize);
                 return Err(String::from_utf8_unchecked(info_log));
             }
         }

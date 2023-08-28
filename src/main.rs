@@ -1,9 +1,11 @@
 use glad_gl::gl;
 use glfw::{Action, Context, Key, WindowHint};
+use program::Program;
 use shader::Shader;
 
 mod buffer;
 mod shader;
+mod program;
 
 fn main() {
     let width: i32 = 800;
@@ -41,6 +43,12 @@ fn main() {
     let fragment_shader = Shader::gen(shader::ShaderKind::FragmentShader);
     fragment_shader.source_str(FRAGMENT_SHADER_SOURCE);
     fragment_shader.compile().unwrap();
+
+    let shader_program = Program::new();
+    shader_program.attach(&vertex_shader);
+    shader_program.attach(&fragment_shader);
+    shader_program.link().unwrap();
+    shader_program.use_program();
 
     unsafe {
         gl::ClearColor(1.0f32, 1.0f32, 0.4f32, 0.7f32);
